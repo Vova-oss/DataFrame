@@ -1,47 +1,33 @@
 package com.example.demo.controllers;
 
-import com.example.demo.Entity.Person;
-import com.example.demo.repository.PersonRepository;
-import com.example.demo.service.ServiceJDBC;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.demo.Context;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.sql.SQLException;
-import java.util.List;
 
 @RestController
 public class PersonController {
     @Autowired
-    ObjectMapper objectMapper;
+    Context context;
 
-    @Autowired
-    ServiceJDBC serviceJDBC;
-
-    @Autowired
-    private PersonRepository repository;
-
-    @GetMapping("/getAllByH")
-    public String selectByHibernate() throws JsonProcessingException {
-
-       return objectMapper.writeValueAsString((List<Person>) repository.findAll());
-    }
-
-    @PostMapping("/insertByH")
-    public void insertByHibernate(@RequestBody String json) throws JsonProcessingException {
-        repository.saveAll(objectMapper.readValue(json, new TypeReference<List<Person>>() {}));
-    }
-
-    @GetMapping("/getAll")
-    public String select() throws SQLException {
-        return serviceJDBC.findAll();
+    @GetMapping("/select")
+    public String select() {
+        return context.select();
     }
 
     @PostMapping("/insert")
-    public void insert(@RequestBody String json) throws JsonProcessingException, SQLException {
-        serviceJDBC.insert(json);
+    public void insert(@RequestBody String json) {
+        context.insert(json);
     }
+
+    @GetMapping("/changeConnection")
+    public String changeConnection(@RequestParam("name") String name){
+        return context.changeConnection(name);
+    }
+
+    @GetMapping("/whatName")
+    public String whatName(){
+        return context.getNameInterface();
+    }
+
 
 }
